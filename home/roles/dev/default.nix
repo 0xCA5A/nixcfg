@@ -22,7 +22,7 @@ in
       java.enable = true;
       js.enable = true;
       plantuml.enable = true;
-      python.enable = true;
+      #python.enable = true;
       scala.enable = true;
     };
 

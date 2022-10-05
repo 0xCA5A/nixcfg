@@ -6,9 +6,9 @@ let
 
   cfg = config.custom.roles.dev.python;
 
-  pythonEnv = machNix.mkPython {
-    python = "python39";
-  };
+  #pythonEnv = machNix.mkPython {
+  #  python = "python39";
+  #};
 
 in
 
@@ -20,8 +20,8 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = [
-      pythonEnv
-    ];
+    #home.packages = [
+    #  pythonEnv
+    #];
   };
 }
