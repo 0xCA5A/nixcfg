@@ -17,6 +17,9 @@ in
 
   config = mkIf cfg.enable {
     programs.steam.enable = true;
-    hardware.xpadneo.enable = true;
+    hardware = {
+      #new-lg4ff.enable = true; # Gaming wheel driver - coming in unstable
+      xpadneo.enable = true;
+    };
   };
 }
