@@ -42,29 +42,16 @@ get_partition() {
 
 BOOT_PARTITION="$(get_partition 1)"
 readonly BOOT_PARTITION
-LVM_PARTITION="$(get_partition 2)"
-readonly LVM_PARTITION
-
-get_ram_size() {
-    local mem_summary
-    mem_summary="$(lsmem --summary=only)"
-    local mem_summary_online
-    mem_summary_online="$(echo "${mem_summary}" | grep "Total online memory:")"
-    local mem_online_size
-    mem_online_size="$(echo "${mem_summary_online}" | grep -Po "[0-9]+[kKmMgGtTpPeE]")"
-    echo "${mem_online_size}"
-}
-
-RAM_SIZE="$(get_ram_size)"
-readonly RAM_SIZE
+ROOT_PARTITION="$(get_partition 2)"
+readonly ROOT_PARTITION
 
 
 ### Declare functions
 
-readonly LVM_PV="nixos-enc"
-readonly LVM_VG="nixos-vg"
-readonly LVM_LV_ROOT="/dev/${LVM_VG}/root"
-readonly LVM_LV_SWAP="/dev/${LVM_VG}/swap"
+readonly ROOT_CRYPT="root-crypt"
+readonly BOOT_FS="boot"
+readonly ROOT_FS="root"
+readonly MOUNT_ROOT="/mnt"
 
 partition() {
     _log "[partition] Deleting partitions..."
@@ -80,59 +67,71 @@ partition() {
     fdisk "${DISK}" -l
 }
 
-create_volumes() {
-    _log "[create_volumes] Encrypting LVM partition..."
-    cryptsetup luksFormat "${LVM_PARTITION}"
-    cryptsetup luksOpen "${LVM_PARTITION}" "${LVM_PV}"
-
-    _log "[create_volumes] Creating LVM volumes..."
-    pvcreate "/dev/mapper/${LVM_PV}"
-    vgcreate "${LVM_VG}" "/dev/mapper/${LVM_PV}"
-    lvcreate -L "${RAM_SIZE}" -n swap "${LVM_VG}"
-    lvcreate -l 100%FREE -n root "${LVM_VG}"
+crypt_setup() {
+    _log "[crypt_setup] Encrypting LVM partition..."
+    cryptsetup luksFormat "${ROOT_PARTITION}"
+    cryptsetup luksOpen "${ROOT_PARTITION}" "${ROOT_CRYPT}"
 }
 
 create_filesystems() {
-    # TODO: Switch to btrfs (https://github.com/wiltaylor/dotfiles/blob/master/tools/makefs-nixos)
     _log "[create_filesystems] Creating filesystems..."
-    mkfs.vfat -n boot "${BOOT_PARTITION}"
-    mkfs.ext4 -L nixos "${LVM_LV_ROOT}"
-    mkswap -L swap "${LVM_LV_SWAP}"
+    mkfs.vfat -n "${BOOT_FS}" "${BOOT_PARTITION}"
+    mkfs.btrfs -L "${ROOT_FS}" "/dev/mapper/${ROOT_CRYPT}"
+
+    _log "[create_filesystems] Creating sub volumes"
+    mount "/dev/disk/by-label/${ROOT_FS}" "${MOUNT_ROOT}"
+    btrfs subvolume create "${MOUNT_ROOT}/@"
+    btrfs subvolume create "${MOUNT_ROOT}/@home"
+    btrfs subvolume create "${MOUNT_ROOT}/@nix"
+    btrfs subvolume create "${MOUNT_ROOT}/@swap"
+    umount "${MOUNT_ROOT}"
 
     _log "[create_filesystems] Result of filesystems creation:"
     lsblk -f "${DISK}"
 }
 
-decrypt_lvm() {
-    _log "[decrypt_lvm] Decrypting volumes..."
-    cryptsetup luksOpen "${LVM_PARTITION}" "${LVM_PV}"
-    lvscan
-    vgchange -ay
+decrypt_volumes() {
+    _log "[decrypt_volumes] Decrypting volumes..."
+    cryptsetup luksOpen "${ROOT_PARTITION}" "${ROOT_CRYPT}"
 
-    _log "[decrypt_lvm] Volumes decrypted:"
+    _log "[decrypt_volumes] Volumes decrypted:"
     lsblk -f "${DISK}"
 }
 
-install() {
-    local mount_root="/mnt"
-    local mount_boot="${mount_root}/boot"
+mount_filesystems() {
+    _log "[mount_filesystems] Mounting file systems..."
+    mount -o noatime,compress=lzo,subvol=@ "/dev/disk/by-label/${ROOT_FS}" "${MOUNT_ROOT}"
+    mkdir -p "${MOUNT_ROOT}/{home,nix,swap}"
+    mount -o noatime,compress=lzo,subvol=@home "/dev/disk/by-label/${ROOT_FS}" "${MOUNT_ROOT}/home"
+    mount -o noatime,compress=zstd,subvol=@nix "/dev/disk/by-label/${ROOT_FS}" "${MOUNT_ROOT}/nix"
+    mount -o subvol=@swap "/dev/disk/by-label/${ROOT_FS}" "${MOUNT_ROOT}/swap"
 
-    _log "[install] Enabling swap..."
-    local swap_list
-    swap_list="$(swapon --noheadings)"
-    local num_swap
-    num_swap=$(echo "${swap_list}" | wc -l)
-    if [[ ${num_swap} -lt 1 ]]; then
-        swapon -v "${LVM_LV_SWAP}"
-    fi
-
-    _log "[install] Mounting volumes..."
-    mount "${LVM_LV_ROOT}" "${mount_root}"
+    local mount_boot="${MOUNT_ROOT}/boot"
     mkdir -p "${mount_boot}"
     mount "${BOOT_PARTITION}" "${mount_boot}"
 
+    _log "[mount_filesystems] File systems mounted:"
+    findmnt --real
+}
+
+enable_swap() {
+    local swap_dir="${MOUNT_ROOT}/swap"
+    local swap_file="${swap_dir}/swapfile"
+
+    _log "[create_filesystems] Creating swap file..."
+    touch "${swap_file}"
+    chattr +C "${swap_file}"
+    dd if=/dev/zero of="${swap_file}" bs=1M count=4096
+    chmod 0600 "${swap_file}"
+    mkswap "${swap_file}"
+
+    _log "[enable_swap] Enabling swap..."
+    swapon -v "${swap_file}"
+}
+
+install() {
     _log "[install] Installing NixOS..."
-    nixos-install --root "${mount_root}" --flake "github:christianharke/nixcfg#${HOSTNAME}" --impure
+    nixos-install --root "${MOUNT_ROOT}" --flake "github:christianharke/nixcfg#${HOSTNAME}" --impure
     _log "[install] Installing NixOS... finished!"
 
     _log "[install] Installation finished, please reboot and remove installation media..."
@@ -143,19 +142,21 @@ install() {
 
 if _read_boolean "Do you want to DELETE ALL PARTITIONS?" N; then
     partition
-    create_volumes
+    crypt_setup
     create_filesystems
 fi
 
-LVM_PV_STATUS="$(cryptsetup -q status "${LVM_PV}")"
-readonly LVM_PV_STATUS
-LVM_PV_NUM_ACTIVE=$(echo "${LVM_PV_STATUS}" | grep "^/dev/mapper/${LVM_PV} is active and is in use.$" -c)
-readonly LVM_PV_NUM_ACTIVE
-if [[ ${LVM_PV_NUM_ACTIVE} -lt 1 ]]; then
-    decrypt_lvm
+CRYPT_VOL_STATUS="$(cryptsetup -q status "${ROOT_CRYPT}")"
+readonly CRYPT_VOL_STATUS
+CRYPT_VOL_NUM_ACTIVE=$(echo "${CRYPT_VOL_STATUS}" | grep "^/dev/mapper/${ROOT_CRYPT} is active and is in use.$" -c)
+readonly CRYPT_VOL_NUM_ACTIVE
+if [[ ${CRYPT_VOL_NUM_ACTIVE} -lt 1 ]]; then
+    decrypt_volumes
 fi
 
 if _read_boolean "Do you want to INSTALL NixOS now?" N; then
+    mount_filesystems
+    enable_swap
     install
 fi
 
