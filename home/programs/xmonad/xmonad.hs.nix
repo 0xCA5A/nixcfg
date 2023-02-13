@@ -97,15 +97,7 @@ pkgs.writeText "xmonad.hs" ''
           h = (5/6)
           x = center w
           y = center h
-      spawnDiary    = myTerminal ++ " -t diary -e bash -c 'vimwiki diary today && vimwiki diary generate-links'"
-      findDiary     = title =? "diary"
-      manageDiary   = customFloating $ W.RationalRect x y w h
-        where
-          w = (4/5)
-          h = (5/6)
-          x = center w
-          y = center h
-      spawnWiki     = myTerminal ++ " -t wiki -e vimwiki"
+      spawnWiki     = "joplin-desktop"
       findWiki      = title =? "wiki"
       manageWiki    = customFloating $ W.RationalRect x y w h
         where
