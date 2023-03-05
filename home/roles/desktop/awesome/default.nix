@@ -17,7 +17,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    xsession.windowManager.awesome.enable = true;    
+    xsession.windowManager.awesome.enable = true;
     xsession.windowManager.awesome.luaModules = [ pkgs.luaPackages.vicious ];
   };
 }

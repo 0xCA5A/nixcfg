@@ -20,7 +20,6 @@ in
       programs.tmux.enable = true;
       users.sca.shell = {
         direnv.enable = true;
-        ranger.enable = true;
       };
     };
 

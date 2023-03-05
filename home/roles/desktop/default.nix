@@ -17,7 +17,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    custom.desktop.awesome.enable = true;
+    custom.roles.desktop.awesome.enable = true;
 
     home = {
       packages = with pkgs; [

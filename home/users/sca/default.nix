@@ -23,21 +23,21 @@ in
     };
 
     custom = {
-#      roles.homeage.enable = true;
+      #      roles.homeage.enable = true;
       roles.desktop.enable = true;
       users."${username}" = {
-#        bin.enable = true;
-#        fonts.enable = true;
+        #        bin.enable = true;
+        #        fonts.enable = true;
         git.enable = true;
         hardware = {
-#          kmonad.enable = true;
+          #          kmonad.enable = true;
           xbindkeys.enable = true;
         };
-#        office.cli.enable = config.custom.roles.office.cli.enable;
-#        ranger.enable = true;
-#        shell.enable = true;
-#        steam.enable = config.custom.roles.gaming.enable;
-#        vim.enable = true;
+        #        office.cli.enable = config.custom.roles.office.cli.enable;
+        #        ranger.enable = true;
+        #        shell.enable = true;
+        #        steam.enable = config.custom.roles.gaming.enable;
+        #        vim.enable = true;
       };
     };
   };
