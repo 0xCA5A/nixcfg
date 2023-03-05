@@ -1,5 +1,5 @@
 {
-  description = "NixOS & Home-Manager Configuration";
+  description = "Home-Manager Configuration";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-22.11";
@@ -76,13 +76,6 @@
       };
     };
 
-    spacevim = {
-      url = "github:christianharke/spacevim-flake";
-      inputs = {
-        nixpkgs.follows = "nixpkgs-unstable";
-        pre-commit-hooks.follows = "pre-commit-hooks";
-      };
-    };
   };
 
   outputs = { self, nixpkgs, ... } @ inputs:
@@ -100,13 +93,9 @@
         import ./flake { inherit inputs rootPath; };
 
       homeConfigurations = listToAttrs [
-        (mkHome "x86_64-linux" "demo@non-nixos-vm")
-        (mkHome "x86_64-linux" "christian@non-nixos-vm")
+        (mkHome "x86_64-linux" "sca@FIXME")
       ];
 
-      nixosConfigurations = listToAttrs [
-        (mkNixos "x86_64-linux" "nixos-vm")
-      ];
     }
     // eachSystem ({ mkGeneric, mkApp, mkCheck, getDevShell, mkDevShell, ... }:
       let
@@ -170,9 +159,7 @@
             })
           ])
           {
-            "build-nixos-vm" = self.nixosConfigurations.nixos-vm.config.system.build.toplevel;
-            "build-demo@non-nixos-vm" = self.homeConfigurations."demo@non-nixos-vm".activationPackage;
-            "build-christian@non-nixos-vm" = self.homeConfigurations."christian@non-nixos-vm".activationPackage;
+            "build-sca@FIXME" = self.homeConfigurations."sca@FIXME".activationPackage;
           };
 
         devShells = listToAttrs [
