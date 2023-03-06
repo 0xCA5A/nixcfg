@@ -119,49 +119,17 @@ this flake to the inputs and define your hosts and users in the `flake.nix`:
 }
 ```
 
+## Validation
+```bash
+find . -name "*.nix" | xargs nixpkgs-fmt
+```
+```bash
+nix flake check
+```
+
 ## Initial Setup
 
-### NixOS
-
-#### NixOS installation
-
-To install NixOS from the ISO of [nixos.org][nixos] on a fresh machine, run:
-
-```bash
-# If nix version < 2.4, run:
-nix-shell -p nixFlakes
-
-sudo su # become root
-mkdir -p ~/.config/nix
-echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
-
-nix run github:christianharke/nixcfg#nixos-install -- <hostname> <disk>
-```
-
-Where:
-
-* `<hostname>` is your target machine's desired host name. Define it beforehand inside
-  `nixosConfigurations` of `flake.nix`.
-* `<disk>` is your target drive to install NixOS on. Accepted values are `/dev/sda`, `/dev/nvme0n1`
-  or the like.
-
-This will completely *nuke* all the data on your `<disk>` device provided. Make sure to have a
-working backup from your data of all drives connected to your target machine.
-
-**Warning:** Even if the script *should* ask you before committing any changes to your machine,
-it can unexpectedly cause great harm!
-
-After rebooting proceed with the [next section](#nixos-config-setup).
-
-#### NixOS config setup
-
-```bash
-$ sudo nix run github:christianharke/nixcfg#setup
-```
-
-### Non-NixOS
-
-#### Nix installation
+### Nix installation
 
 ```bash
 # install Nix
@@ -171,11 +139,13 @@ sh <(curl -L https://nixos.org/nix/install) --no-channel-add --no-modify-profile
 . ~/.nix-profile/etc/profile.d/nix.sh
 ```
 
-#### Nix config setup
+### Nix config setup
 
 ```bash
 # Set up this Nix configuration
-nix run github:christianharke/nixcfg#setup
+nix build ".#homeConfigurations.${USER_NAME}@${HOST_NAME}.activationPackage"
+
+
 
 # set login shell
 chsh -s /bin/zsh

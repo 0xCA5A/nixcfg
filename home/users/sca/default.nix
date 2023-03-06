@@ -25,6 +25,8 @@ in
     custom = {
       #      roles.homeage.enable = true;
       roles.desktop.enable = true;
+      roles.graphics.enable = true;
+      roles.dev.enable = true;
       users."${username}" = {
         #        bin.enable = true;
         #        fonts.enable = true;
@@ -33,6 +35,7 @@ in
           #          kmonad.enable = true;
           xbindkeys.enable = true;
         };
+        shell.enable = true;
         #        office.cli.enable = config.custom.roles.office.cli.enable;
         #        ranger.enable = true;
         #        shell.enable = true;

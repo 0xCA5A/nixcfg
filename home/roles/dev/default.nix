@@ -17,7 +17,7 @@ in
 
   config = mkIf cfg.enable {
     custom.roles.dev = {
-      embedmongo.enable = true;
+      #  embedmongo.enable = true;
       intellij = {
         enable = true;
         ultimate = true;
@@ -25,7 +25,7 @@ in
       java.enable = true;
       js.enable = true;
       plantuml.enable = true;
-      scala.enable = true;
+      # scala.enable = true;
     };
 
     home.packages = with pkgs; [

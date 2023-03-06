@@ -25,6 +25,8 @@ in
         peek
         gifski
         xclip
+        flameshot
+        gnome.gnome-terminal
       ];
     };
 
