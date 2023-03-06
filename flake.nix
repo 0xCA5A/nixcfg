@@ -86,7 +86,7 @@
         import ./flake { inherit inputs rootPath; };
 
       homeConfigurations = listToAttrs [
-        (mkHome "x86_64-linux" "sca@FIXME")
+        (mkHome "x86_64-linux" "sca@bcr-nl010")
       ];
 
     }
@@ -122,7 +122,7 @@
             })
           ])
           {
-            "build-sca@FIXME" = self.homeConfigurations."sca@FIXME".activationPackage;
+            "build-sca@bcr-nl010" = self.homeConfigurations."sca@bcr-nl010".activationPackage;
           };
 
         devShells = listToAttrs [
