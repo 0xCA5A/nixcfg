@@ -90,7 +90,7 @@
       ];
 
     }
-    // eachSystem ({ mkGeneric, mkApp, mkCheck, getDevShell, mkDevShell, ... }:
+    // eachSystem ({ mkGeneric, mkCheck, getDevShell, mkDevShell, ... }:
       let
         mkShellCheck = pkgs: ''
           shopt -s globstar

@@ -46,7 +46,6 @@ in
       (system:
         builderPerSystem {
           mkGeneric = nameValuePairSystemWrapper system;
-          mkApp = nameValuePairWrapper ./builders/mkApp.nix system;
           mkCheck = nameValuePairWrapper ./builders/mkCheck.nix system;
           getDevShell = name: inputs.self.devShells."${system}"."${name}";
           mkDevShell = nameValuePairWrapper ./builders/mkDevShell.nix system;

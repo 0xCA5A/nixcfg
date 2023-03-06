@@ -28,6 +28,7 @@ in
         flameshot
         gnome.gnome-terminal
         fish
+        tree
       ];
     };
 
