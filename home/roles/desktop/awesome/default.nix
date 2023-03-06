@@ -18,6 +18,6 @@ in
 
   config = mkIf cfg.enable {
     xsession.windowManager.awesome.enable = true;
-    xsession.windowManager.awesome.luaModules = [ pkgs.luaPackages.vicious ];
+    xsession.windowManager.awesome.luaModules = [ pkgs.luaPackages.vicious pkgs.luaPackages.luarocks ];
   };
 }
