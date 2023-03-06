@@ -66,7 +66,6 @@ in
 
     programs = {
       ssh = import ./ssh.nix;
-      # zsh = import ./zsh.nix;
 
       bat.enable = true;
       exa.enable = true;

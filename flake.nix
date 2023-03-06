@@ -61,13 +61,6 @@
       };
     };
 
-    kmonad = {
-      url = "github:christianharke/kmonad?dir=nix";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-      };
-    };
-
     nixgl = {
       url = "github:guibou/nixGL";
       inputs = {
@@ -86,7 +79,7 @@
       };
 
       inherit (nixpkgs.lib) listToAttrs recursiveUpdate;
-      inherit (flakeLib) eachSystem mkHome mkNixos;
+      inherit (flakeLib) eachSystem mkHome;
     in
     {
       lib = { rootPath }:
@@ -106,36 +99,6 @@
         '';
       in
       {
-        apps = listToAttrs [
-          (mkApp "setup" {
-            file = "setup.sh";
-            envs = {
-              _doNotClearPath = true;
-              flakePath = "/home/\$(logname)/.nix-config";
-            };
-            path = pkgs: with pkgs; [
-              git
-              hostname
-              jq
-            ];
-          })
-
-          (mkApp "nixos-install" {
-            file = "nixos-install.sh";
-            envs = {
-              _doNotClearPath = true;
-            };
-            path = pkgs: with pkgs; [
-              git
-              hostname
-              util-linux
-              parted
-              cryptsetup
-              lvm2
-            ];
-          })
-        ];
-
         checks = recursiveUpdate
           (listToAttrs [
             (mkGeneric "pre-commit-check" (system: inputs.pre-commit-hooks.lib."${system}".run {

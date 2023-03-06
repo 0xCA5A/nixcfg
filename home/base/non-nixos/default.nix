@@ -41,10 +41,6 @@ in
       };
     };
 
-    programs.zsh.envExtra = mkAfter ''
-      hash -f
-    '';
-
     targets.genericLinux.enable = true;
   };
 }

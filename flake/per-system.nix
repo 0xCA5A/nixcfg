@@ -29,7 +29,6 @@ let
   overlays = [
     (final: prev: {
       inherit (inputs.agenix-cli.packages."${system}") agenix-cli;
-      inherit (inputs.kmonad.packages."${system}") kmonad;
 
       nixgl = inputs.nixgl.packages."${system}".default;
 

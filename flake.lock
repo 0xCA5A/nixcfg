@@ -175,28 +175,6 @@
         "type": "gitlab"
       }
     },
-    "kmonad": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "dir": "nix",
-        "lastModified": 1674855709,
-        "narHash": "sha256-rd5GBiT1xsLl39KRUgnIjvczlgqdcq+PZ8JUcnYN1Gg=",
-        "owner": "christianharke",
-        "repo": "kmonad",
-        "rev": "ac767bde78a8cc3b160233758a4eb288227716c1",
-        "type": "github"
-      },
-      "original": {
-        "dir": "nix",
-        "owner": "christianharke",
-        "repo": "kmonad",
-        "type": "github"
-      }
-    },
     "nixgl": {
       "inputs": {
         "flake-utils": [
@@ -300,7 +278,6 @@
         "home-manager": "home-manager",
         "homeage": "homeage",
         "i3lock-pixeled": "i3lock-pixeled",
-        "kmonad": "kmonad",
         "nixgl": "nixgl",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",

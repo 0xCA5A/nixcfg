@@ -6,17 +6,12 @@
 
 ## Features
 
-* Automation scripts to setup a fresh [NixOS machine from scratch](flake/apps/nixos-install.sh) or
-  an [arbitrary preinstalled Linux machine](flake/apps/setup.sh) easily
 * Secret management in [NixOS][nixos] ([agenix][agenix]) and [Home Manager][home-manager]
   ([homeage][homeage]) with [age][age]
 * Checks source code with [shellcheck][shellcheck] and [nixpkgs-fmt][nixpkgs-fmt]
-* Daily automatic flake input updates committed to master when CI passes
 
 ## Supported configurations
 
-* [NixOS][nixos]-managed
-  * `nixos-vm`
 * [Home Manager][home-manager]-managed
   * `non-nixos-vm`
 
@@ -143,12 +138,10 @@ sh <(curl -L https://nixos.org/nix/install) --no-channel-add --no-modify-profile
 
 ```bash
 # Set up this Nix configuration
-nix build ".#homeConfigurations.${USER_NAME}@${HOST_NAME}.activationPackage"
-
-
+nix build ".#homeConfigurations.${USER_NAME}@${HOSTNAME}.activationPackage"
 
 # set login shell
-chsh -s /bin/zsh
+chsh -s /bin/fish
 ```
 
 ## Secrets management
@@ -198,11 +191,8 @@ config.
 ## Rebuilding
 
 ```bash
-$ # On NixOS
-$ sudo nixos-rebuild switch
-
 $ # On non-NixOS
-$ hm-switch
+$ home-manager switch -b hm-bak --impure --flake ${FKAKE_DIR}
 ```
 
 [ci]: https://github.com/christianharke/nixcfg/actions/workflows/ci.yml

@@ -39,7 +39,6 @@ in
 
 {
   mkHome = simpleNameValuePairWrapper ./builders/mkHome.nix;
-  mkNixos = simpleNameValuePairWrapper ./builders/mkNixos.nix;
 
   eachSystem = builderPerSystem:
     inputs.flake-utils.lib.eachSystem
