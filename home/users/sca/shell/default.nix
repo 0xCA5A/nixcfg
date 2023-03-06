@@ -58,6 +58,7 @@ in
       ];
 
       sessionVariables = {
+        TERM = "gnome-terminal";
         MANPAGER = "less -R --use-color -Dd+g -Du+b";
       };
 

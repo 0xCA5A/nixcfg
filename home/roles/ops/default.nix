@@ -18,6 +18,7 @@ in
   config = mkIf cfg.enable {
     home.packages = [
       pkgs.lnav
+      pkgs.openshift
     ];
   };
 }

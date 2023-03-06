@@ -18,11 +18,11 @@ in
   config = mkIf cfg.enable {
     home = {
       packages = with pkgs; [
-        plex-media-player
+        #       plex-media-player
         spotifywm
       ];
     };
 
-    programs.mpv.enable = true;
+    #    programs.mpv.enable = true;
   };
 }

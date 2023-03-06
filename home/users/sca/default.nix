@@ -21,7 +21,11 @@ in
       username = mkDefault username;
       homeDirectory = mkDefault "/home/${username}";
 
-
+      sessionVariables = {
+        EDITOR = "nano";
+        TERM = "gnome-terminal";
+        SHELL = "fish";
+      };
 
       packages = with pkgs; [
         fish
@@ -34,6 +38,8 @@ in
       #      roles.homeage.enable = true;
       roles.desktop.enable = true;
       roles.graphics.enable = true;
+      roles.multimedia.enable = true;
+      roles.ops.enable = true;
       roles.dev.enable = true;
       users."${username}" = {
         bin.enable = true;
