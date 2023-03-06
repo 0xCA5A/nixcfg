@@ -27,8 +27,6 @@ in
         xclip
         flameshot
         gnome.gnome-terminal
-        fish
-        tree
       ];
     };
 

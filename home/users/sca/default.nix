@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 with lib;
 
@@ -20,6 +20,14 @@ in
     home = {
       username = mkDefault username;
       homeDirectory = mkDefault "/home/${username}";
+
+
+
+      packages = with pkgs; [
+        fish
+        tree
+      ];
+
     };
 
     custom = {
@@ -28,8 +36,8 @@ in
       roles.graphics.enable = true;
       roles.dev.enable = true;
       users."${username}" = {
-        #        bin.enable = true;
-        #        fonts.enable = true;
+        bin.enable = true;
+        fonts.enable = true;
         git.enable = true;
         hardware = {
           #          kmonad.enable = true;
@@ -41,7 +49,10 @@ in
         #        shell.enable = true;
         #        steam.enable = config.custom.roles.gaming.enable;
         #        vim.enable = true;
+
       };
+
+
     };
   };
 }
