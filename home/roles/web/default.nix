@@ -27,7 +27,6 @@ in
           new-tab-override
           onepassword-password-manager
           ublock-origin
-          vim-vixen
         ];
       };
       roles.web.nextcloud-client.enable = true;
@@ -40,7 +39,6 @@ in
       joplin-desktop
       unstable.fluent-reader
       wget
-      thunderbird
 
       # Messengers
       signal-desktop
